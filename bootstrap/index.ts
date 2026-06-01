@@ -12,7 +12,11 @@ const port = Number(process.env.PORT) || 3000;
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL ?? "*",
+    origin: [
+      "https://preview--ellasicelandstudyplan.lovable.app",
+      "https://ellasicelandstudyplan.lovable.app",
+      process.env.FRONTEND_URL ?? "",
+    ].filter(Boolean),
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
