@@ -115,7 +115,7 @@ async function insertGeneratedTasks(
 
 universitiesRouter.get("/", requireAuth, async (req, res) => {
   const result = await query(
-    "SELECT * FROM universities WHERE user_id = $1 ORDER BY created_at",
+    "SELECT * FROM universities WHERE (user_id = $1 OR user_id IS NULL) ORDER BY is_custom, created_at",
     [req.user!.id]
   );
 
@@ -154,7 +154,7 @@ universitiesRouter.get("/:uniId/tasks", requireAuth, async (req, res) => {
   }
 
   const tasksResult = await query(
-    "SELECT * FROM tasks WHERE user_id = $1 AND uni_id = $2 ORDER BY sort_order",
+    "SELECT * FROM tasks WHERE (user_id = $1 OR user_id IS NULL) AND uni_id = $2 ORDER BY sort_order",
     [userId, uniId]
   );
 
