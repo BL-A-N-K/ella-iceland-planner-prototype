@@ -14,7 +14,11 @@ const routes_1 = require("../routes");
 exports.app = (0, express_1.default)();
 const port = Number(process.env.PORT) || 3000;
 exports.app.use((0, cors_1.default)({
-    origin: process.env.FRONTEND_URL ?? "*",
+    origin: [
+        "https://preview--ellasicelandstudyplan.lovable.app",
+        "https://ellasicelandstudyplan.lovable.app",
+        process.env.FRONTEND_URL ?? "",
+    ].filter(Boolean),
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,

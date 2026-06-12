@@ -88,7 +88,7 @@ async function insertGeneratedTasks(userId, uniId, generated) {
     }
 }
 exports.universitiesRouter.get("/", middleware_1.requireAuth, async (req, res) => {
-    const result = await (0, db_1.query)("SELECT * FROM universities WHERE user_id = $1 ORDER BY created_at", [req.user.id]);
+    const result = await (0, db_1.query)("SELECT * FROM universities WHERE (user_id = $1 OR user_id IS NULL) ORDER BY is_custom, created_at", [req.user.id]);
     return res.status(200).json(result.rows.map(mapUniversityRow));
 });
 exports.universitiesRouter.post("/", middleware_1.requireAuth, async (req, res) => {
@@ -105,12 +105,12 @@ exports.universitiesRouter.post("/", middleware_1.requireAuth, async (req, res) 
 exports.universitiesRouter.get("/:uniId/tasks", middleware_1.requireAuth, async (req, res) => {
     const userId = req.user.id;
     const { uniId } = req.params;
-    const uniResult = await (0, db_1.query)("SELECT * FROM universities WHERE id = $1 AND user_id = $2", [uniId, userId]);
+    const uniResult = await (0, db_1.query)("SELECT * FROM universities WHERE id = $1 AND (user_id = $2 OR user_id IS NULL)", [uniId, userId]);
     const uniRow = uniResult.rows[0];
     if (!uniRow) {
         return res.status(404).json({ error: "University not found" });
     }
-    const tasksResult = await (0, db_1.query)("SELECT * FROM tasks WHERE user_id = $1 AND uni_id = $2 ORDER BY sort_order", [userId, uniId]);
+    const tasksResult = await (0, db_1.query)("SELECT * FROM tasks WHERE (user_id = $1 OR user_id IS NULL) AND uni_id = $2 ORDER BY sort_order", [userId, uniId]);
     if (tasksResult.rows.length > 0) {
         return res.status(200).json(groupTasks(tasksResult.rows));
     }
@@ -134,6 +134,6 @@ exports.universitiesRouter.get("/:uniId/tasks", middleware_1.requireAuth, async 
         return res.status(200).json(groupTasks(insertedResult.rows));
     }
     catch {
-        return res.status(500).json({ error: "Failed to generate tasks" });
+        return res.status(200).json({ before: [], after: [] });
     }
 });

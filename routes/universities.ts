@@ -145,7 +145,7 @@ universitiesRouter.get("/:uniId/tasks", requireAuth, async (req, res) => {
   const { uniId } = req.params;
 
   const uniResult = await query(
-    "SELECT * FROM universities WHERE id = $1 AND user_id = $2",
+    "SELECT * FROM universities WHERE id = $1 AND (user_id = $2 OR user_id IS NULL)",
     [uniId, userId]
   );
   const uniRow = uniResult.rows[0];
@@ -187,6 +187,6 @@ universitiesRouter.get("/:uniId/tasks", requireAuth, async (req, res) => {
 
     return res.status(200).json(groupTasks(insertedResult.rows));
   } catch {
-    return res.status(500).json({ error: "Failed to generate tasks" });
+    return res.status(200).json({ before: [], after: [] });
   }
 });
