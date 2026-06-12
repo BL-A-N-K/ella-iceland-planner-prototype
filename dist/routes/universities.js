@@ -133,7 +133,8 @@ exports.universitiesRouter.get("/:uniId/tasks", middleware_1.requireAuth, async 
         const insertedResult = await (0, db_1.query)("SELECT * FROM tasks WHERE user_id = $1 AND uni_id = $2 ORDER BY sort_order", [userId, uniId]);
         return res.status(200).json(groupTasks(insertedResult.rows));
     }
-    catch {
+    catch (err) {
+        console.error("Task generation fallback failed:", err);
         return res.status(200).json({ before: [], after: [] });
     }
 });

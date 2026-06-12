@@ -186,7 +186,8 @@ universitiesRouter.get("/:uniId/tasks", requireAuth, async (req, res) => {
     );
 
     return res.status(200).json(groupTasks(insertedResult.rows));
-  } catch {
+  } catch (err) {
+    console.error("Task generation fallback failed:", err);
     return res.status(200).json({ before: [], after: [] });
   }
 });
